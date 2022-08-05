@@ -1,3 +1,4 @@
+import json
 from time import sleep
 
 from selenium import webdriver
@@ -11,7 +12,8 @@ options.add_argument('window-size=1200x600')
 driver = webdriver.Chrome(options=options)
 driver.get(URL)
 source = driver.page_source
-SCROLL_DOWN=True
+
+SCROLL_DOWN = False
 # scroll down to bottom for loading more products (max 60-80 products) almost page 4-5
 # html is for scrolling down to bottom
 if SCROLL_DOWN:
@@ -21,21 +23,31 @@ if SCROLL_DOWN:
         sleep(1)
 all_product = driver.find_elements(By.XPATH, value='//*[@id="plpLayoutContainer"]/section[1]/div[2]/div[1]/div/div/a')
 
-# how count of all products in the page
+# counts of all products in the page
 print(len(all_product))
 print(100 * '-')
 
 counter = 0  # counter for product
+dict_data = {'products': []}  # dictionary for data
+
 for product in all_product:
     counter += 1
     title = product.find_element(By.TAG_NAME, 'h2').text
     # I use counter for get the price of the product because
     # I can`t get the price of the product with the xpath of the "all_product"
     price = driver.find_element(By.XPATH,
-                                f'//*[@id="plpLayoutContainer"]/section[1]/div[2]/div[1]/div/div[{counter}]/a/article/div/div/div[4]/div[1]').text
+                                f'//*[@id="plpLayoutContainer"]/section[1]/div[2]/div[1]/div/div[{counter}]'
+                                f'/a/article/div/div/div[4]/div[1]').text
     link = product.get_attribute('href')
 
     print(title, '\n', price, '\n', link)
     print(100 * '-')
 
+    # save on dictionary
+    dict_data['products'].append({'Number': counter, 'title': title, 'price': price, 'link': link})
+
+# save on json file
+convert_to_json(dict_data)
 driver.quit()
+
+# todo:get all pages
