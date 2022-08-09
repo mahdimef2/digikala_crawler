@@ -3,6 +3,7 @@ import json
 BASE_URL = "https://www.digikala.com/search/"
 CATEGORY_URL = "category-mobile-phone/product-list/"
 URL = BASE_URL + CATEGORY_URL
+MAX_PAGE_CRAWL = 2  # max page number for crawling is 100 for www.digikala.com
 
 
 # utils functions for scraping data from the site
