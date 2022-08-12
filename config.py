@@ -13,3 +13,10 @@ def convert_to_json(dict_data):
         main_file['products'].append(dict_data)
         with open('products.json', 'w') as file_write:
             json.dump(main_file, file_write, indent=4, ensure_ascii=False)
+
+
+def create_empty_json_file():
+    # create a new empty json file for the products
+    dict_data = {'products': []}  # dictionary for data
+    with open('products.json', 'w') as file:
+        json.dump(dict_data, file, indent=4, ensure_ascii=False)

@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from time import sleep
-
+import sys
 from selenium import webdriver
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
@@ -21,7 +21,11 @@ with open('products.json', 'w') as file:
 # get all products from the site in range of MAX_PAGE_CRAWL
 product_counter = 0  # counter for product 1 to n in all page
 print('start crawling -- Start time: ' + str(datetime.now()))
-for page in range(1, MAX_PAGE_CRAWL):
+
+URL = str(sys.argv[1])  # get URL without page number in link from user
+MAX_PAGE_CRAWL = int(sys.argv[2])  # get number of page that user want to crawle
+
+for page in range(1, MAX_PAGE_CRAWL + 1):
     page_link = f'?page={page}'
     driver.get(URL + page_link)
     print(f'Scraping page {URL}{page_link}')
@@ -38,6 +42,9 @@ for page in range(1, MAX_PAGE_CRAWL):
         price = driver.find_element(By.XPATH,
                                     f'//*[@id="plpLayoutContainer"]/section[1]/div[2]/div[1]/div/div[{item_counter}]'
                                     f'/a/article/div/div/div[4]/div[1]').text
+        img_link = driver.find_element(By.XPATH,
+                                       f'//*[@id="plpLayoutContainer"]/section[1]/div[2]/div[1]/div/div[{item_counter}]'
+                                       f'/a/article/div[2]/div[1]/div/div/div/div/img').get_attribute('src')
         link = product.get_attribute('href')
         product_id = link.split('/')[4]
 
@@ -46,6 +53,7 @@ for page in range(1, MAX_PAGE_CRAWL):
                                'title': title,
                                'price': price,
                                'link': link,
+                               'img_link': img_link,
                                'product_id': product_id}
         # save on json file
         convert_to_json(dict_product_detail)
@@ -54,5 +62,3 @@ for page in range(1, MAX_PAGE_CRAWL):
     # dict_data['products'] = []
 
 driver.quit()
-
-# todo:add sqlite database for products
